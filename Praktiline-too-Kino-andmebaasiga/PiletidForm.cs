@@ -173,6 +173,19 @@ namespace Praktiline_too_Kino_andmebaasiga
             try
             {
                 conn.Open();
+
+                cmd = new SqlCommand("SELECT Id FROM Kasutajad WHERE Nimi=@nimi", conn);
+                cmd.Parameters.AddWithValue("@nimi", kasutajad_cb.Text);
+                int kasutajadId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                cmd = new SqlCommand("SELECT Id FROM Seansid WHERE Start_time=@start", conn);
+                cmd.Parameters.AddWithValue("@start", seansid_cb.Text);
+                int seansidId = Convert.ToInt32(cmd.ExecuteScalar());
+
+                cmd = new SqlCommand("SELECT Id FROM Kohad WHERE Broneeringu_staatus=@staatus", conn);
+                cmd.Parameters.AddWithValue("@staatus", kohad_cb.Text);
+                int kohadId = Convert.ToInt32(cmd.ExecuteScalar());
+                
                 cmd = new SqlCommand("INSERT INTO Piletid (Kasutajad_Id, Seansid_Id, Kohad_Id, Ostuaeg) VALUES (@kasutajad, @seansid, @kohad, @ostuaeg)", conn);
                 cmd.Parameters.AddWithValue("@kasutajad", kasutajadTable.Rows[kasutajad_cb.SelectedIndex]["Id"]);
                 cmd.Parameters.AddWithValue("@seansid", seansidTable.Rows[seansid_cb.SelectedIndex]["Id"]);
