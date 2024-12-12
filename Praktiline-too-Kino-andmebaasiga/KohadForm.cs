@@ -106,11 +106,12 @@ namespace Praktiline_too_Kino_andmebaasiga
         private void NaitaSeansid()
         {
             conn.Open();
-            cmd = new SqlCommand("SELECT Id, Start_time FROM Seansid", conn);
-            adapter = new SqlDataAdapter(cmd);
+            SqlCommand cmd = new SqlCommand("SELECT Id, Start_time FROM Seansid", conn);
+            SqlDataAdapter adapter = new SqlDataAdapter(cmd);
             seansidTable = new DataTable();
             adapter.Fill(seansidTable);
 
+            seansid_cb.Items.Clear();
             foreach (DataRow row in seansidTable.Rows)
             {
                 seansid_cb.Items.Add(row["Start_time"]);
@@ -136,8 +137,13 @@ namespace Praktiline_too_Kino_andmebaasiga
                 !string.IsNullOrEmpty(rida_txt.Text) && !string.IsNullOrEmpty(koht_txt.Text))
             {
                 conn.Open();
-                cmd = new SqlCommand("INSERT INTO Kohad (Seansid_Id, Broneeringu_staatus, Rida_number, Kohanumber) VALUES (@seansid, @broneeringu, @rida, @koht)", conn);
-                cmd.Parameters.AddWithValue("@seansid", seansid_cb.SelectedIndex + 1);
+
+                cmd = new SqlCommand("SELECT Id FROM Seansid WHERE Start_time=@start", conn);
+                cmd.Parameters.AddWithValue("@filmi", kinolaud_cb.Text);
+                ID = Convert.ToInt32(cmd.ExecuteScalar());
+                    
+                cmd = new SqlCommand("INSERT INTO Kohad (Seansid_Id, Broneeringu_staatus, Rida_number, Kohanumber) VALUES (@start, @broneeringu, @rida, @koht)", conn);
+                cmd.Parameters.AddWithValue("@start", seansid_cb.SelectedIndex + 1);
                 cmd.Parameters.AddWithValue("@broneeringu", broneeringu_txt.Text);
                 cmd.Parameters.AddWithValue("@rida", rida_txt.Text);
                 cmd.Parameters.AddWithValue("@koht", koht_txt.Text);
